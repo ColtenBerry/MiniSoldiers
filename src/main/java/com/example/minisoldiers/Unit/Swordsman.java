@@ -12,7 +12,9 @@ public class Swordsman extends Parent implements Unit {
     private int defence = 5;
     private int movement = 4;
     private int range = 1;
-    private int health = 10;
+    private int health = 100;
+    private int attackPower = attack * health;
+    private int defencePower = defence * health;
     private Circle c;
 
     public Swordsman(Faction faction) {
@@ -50,4 +52,17 @@ public class Swordsman extends Parent implements Unit {
     public int getHealth() {
         return health;
     }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getAttackPower() {
+        return attackPower;
+    }
+
+    public int getDefencePower() {
+        return defencePower;
+    }
+
 }

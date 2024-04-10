@@ -83,6 +83,23 @@ public class Tile extends Parent {
         unit = null;
         return u;
     }
+
+    public void attack(Tile tile) {
+        //get combatants
+        Unit opponent = tile.getUnit();
+        Unit friendly = unit;
+
+        //get statistics
+        int attackPower = friendly.getAttackPower();
+        int defensePower = opponent.getDefencePower();
+
+        //calculate damage to each
+        //add on tile bonuses
+
+        //adjust health statistics accordingly
+        unit.setHealth(unit.getHealth() - defensePower);
+        opponent.setHealth(opponent.getHealth() - attackPower);
+    }
     public void addUnit(Unit unit) {
         if (!containsUnit())  {
             s = unit.getVisual();
@@ -92,6 +109,7 @@ public class Tile extends Parent {
             this.unit = unit;
         }
     }
+    //get the tiles around this. This may be better suited for the map rather than for tile...
     public Location getLeft() {
         return new Location(x - 1, y);
     }

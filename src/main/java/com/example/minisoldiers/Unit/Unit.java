@@ -11,5 +11,8 @@ public interface Unit {
     public int getRange();
     public int getHealth();
     public Shape getVisual();
+    public void setHealth(int health);
+    public int getAttackPower();
+    public int getDefencePower();
 
 }
