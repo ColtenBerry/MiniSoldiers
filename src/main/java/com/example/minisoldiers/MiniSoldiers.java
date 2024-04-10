@@ -1,6 +1,11 @@
 package com.example.minisoldiers;
 
 import com.example.minisoldiers.Unit.Unit;
+/*
+So, i need to decide if I want the tile to store the unit, or if the unit should be aware of where it is.
+I will think about it and make a pro / con list in the morning.
+Intuitively, the unit should know its location, but the game seems to be functional without it
+ */
 
 public class MiniSoldiers {
     private static final MiniSoldiers game = new MiniSoldiers();
@@ -9,11 +14,12 @@ public class MiniSoldiers {
     private boolean playerTurn;
     private double gameHeight = 600;
     private double gameWidth = 600;
-    private int tileSize = 25;
-    private int numTiles = (int) gameHeight / tileSize;
+    private int tileSize = 40;
+    private int numTilesWidth = (int) gameWidth / tileSize;
+    private int numTilesHeight = (int) gameHeight / tileSize;
 
     public MiniSoldiers() {
-        map = new Map(numTiles, numTiles, tileSize);
+        map = new Map(numTilesWidth, numTilesHeight, tileSize);
     }
 
     public static MiniSoldiers getGame() {
@@ -57,10 +63,20 @@ public class MiniSoldiers {
         this.map = map;
     }
 
-    public int getNumTiles() {
-        return numTiles;
+    public int getNumTilesWidth() {
+        return numTilesWidth;
     }
-    public void spawnUnit(Unit unit, int x, int y) {
-        map.getTile(x, y).setUnit(unit);
+
+    public int getNumTilesHeight() {
+        return numTilesHeight;
+    }
+
+    public void spawnUnit(Unit unit, Location location) {
+        map.getTile(location).addUnit(unit);
+    }
+    public Location getLocation(double x, double y) {
+        int locX = (int) x / tileSize;
+        int locY = (int) y / tileSize;
+        return new Location(locX, locY);
     }
 }

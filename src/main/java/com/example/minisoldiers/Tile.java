@@ -10,15 +10,18 @@ import javafx.scene.shape.Shape;
 public class Tile extends Parent {
     private Terrain terrain;
     private Unit unit;
-    private Rectangle r;
-    private int x;
-    private int y;
+    private Rectangle r, select;
+    private Location location;
+    private int x, y;
     private int tileSize;
     private Shape s;
-    public Tile(Terrain terrain, int x, int y, int tileSize) {
+    boolean selected = false;
+    boolean highlighted = false;
+    public Tile(Terrain terrain, Location location, int tileSize) {
         this.terrain = terrain;
-        this.x = x;
-        this.y = y;
+        this.location = location;
+        this.x = location.getX();
+        this.y = location.getY();
         this.tileSize = tileSize;
         this.r = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
         r.setFill(terrain.getColor());
@@ -26,12 +29,38 @@ public class Tile extends Parent {
         getChildren().add(r);
     }
     public void draw() {
+        //draw unit
         if (unit != null) {
             s = unit.getVisual();
             s = new Circle(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, tileSize / 2);
             s.setFill(unit.getFaction().getColor());
             getChildren().add(s);
         }
+        //highlight if selected
+        if (selected) {
+            //this sets the transparency
+//        r.setOpacity(.5);
+//            r.setFill(Color.YELLOWGREEN);
+        }
+        //undo highlight
+        else {
+//            r.setFill(terrain.getColor());
+        }
+    }
+    public void highlight(boolean b) {
+        highlighted = b;
+        if (b) {
+            r.setFill(Color.YELLOWGREEN);
+        }
+        else {
+            r.setFill(terrain.getColor());
+        }
+    }
+    public Location getLocation() {
+        return location;
+    }
+    public void setSelected(Boolean s) {
+        this.selected = s;
     }
 
     public Terrain getTerrain() {
@@ -40,12 +69,39 @@ public class Tile extends Parent {
     public void setTerrain(Terrain terrain) {
         this.terrain = terrain;
     }
-
+    public boolean containsUnit() {
+        return unit != null;
+    }
     public Unit getUnit() {
         return unit;
     }
-    public void setUnit(Unit unit) {
-        this.unit = unit;
-        draw();
+    public Unit popUnit() {
+        getChildren().remove(s);
+
+        //this sets unit to null while still returning unit
+        Unit u = unit;
+        unit = null;
+        return u;
+    }
+    public void addUnit(Unit unit) {
+        if (!containsUnit())  {
+            s = unit.getVisual();
+            s = new Circle(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, tileSize / 2);
+            s.setFill(unit.getFaction().getColor());
+            getChildren().add(s);
+            this.unit = unit;
+        }
+    }
+    public Location getLeft() {
+        return new Location(x - 1, y);
+    }
+    public Location getRight() {
+        return new Location(x + 1, y);
+    }
+    public Location getAbove() {
+        return new Location (x, y - 1);
+    }
+    public Location getBelow() {
+        return new Location(x, y + 1);
     }
 }
