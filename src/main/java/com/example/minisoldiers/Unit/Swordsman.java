@@ -10,12 +10,14 @@ public class Swordsman extends Parent implements Unit {
     private Faction faction;
     private int attack = 2;
     private int defence = 5;
-    private int movement = 4;
-    private int range = 1;
+    private final int movement = 8;
+    private final int range = 1;
     private int health = 100;
-    private int attackPower = attack * health;
-    private int defencePower = defence * health;
+    private int attackPower = attack * (health / 100);
+    private int defencePower = defence * (health / 100);
     private Circle c;
+    private boolean hasMoved;
+    private boolean hasAttacked;
 
     public Swordsman(Faction faction) {
         this.faction = faction;
@@ -63,6 +65,26 @@ public class Swordsman extends Parent implements Unit {
 
     public int getDefencePower() {
         return defencePower;
+    }
+
+    @Override
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    @Override
+    public boolean hasAttacked() {
+        return hasAttacked;
+    }
+    public void setHasMoved(boolean b) {
+        hasMoved = b;
+    }
+    public void setHasAttacked(boolean b) {
+        hasAttacked = b;
+    }
+
+    public String toString() {
+        return "Health: " + health;
     }
 
 }

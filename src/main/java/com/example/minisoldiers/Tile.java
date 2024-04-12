@@ -10,23 +10,28 @@ import javafx.scene.shape.Shape;
 public class Tile extends Parent {
     private Terrain terrain;
     private Unit unit;
-    private Rectangle r, select;
+    private Rectangle r, h;
     private Location location;
     private int x, y;
     private int tileSize;
     private Shape s;
-    boolean selected = false;
-    boolean highlighted = false;
+    private boolean selected = false;
+    private boolean highlighted = false;
     public Tile(Terrain terrain, Location location, int tileSize) {
         this.terrain = terrain;
         this.location = location;
         this.x = location.getX();
         this.y = location.getY();
         this.tileSize = tileSize;
+        //draw tile
         this.r = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
         r.setFill(terrain.getColor());
         r.setStroke(Color.BLACK);
         getChildren().add(r);
+        //draw highlight
+        this.h = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+        h.setStroke(Color.BLACK);
+        h.setOpacity(.5);
     }
     public void draw() {
         //draw unit
@@ -47,14 +52,16 @@ public class Tile extends Parent {
 //            r.setFill(terrain.getColor());
         }
     }
-    public void highlight(boolean b) {
-        highlighted = b;
-        if (b) {
-            r.setFill(Color.YELLOWGREEN);
+    public void highlight(Color c) {
+        highlighted = true;
+        h.setFill(c);
+        if (!getChildren().contains(h)) {
+            getChildren().add(h);
         }
-        else {
-            r.setFill(terrain.getColor());
-        }
+    }
+    public void unHighlight() {
+        getChildren().remove(h);
+        highlighted = false;
     }
     public Location getLocation() {
         return location;

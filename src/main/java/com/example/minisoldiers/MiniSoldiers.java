@@ -1,6 +1,8 @@
 package com.example.minisoldiers;
 
 import com.example.minisoldiers.Unit.Unit;
+
+import java.util.ArrayList;
 /*
 So, i need to decide if I want the tile to store the unit, or if the unit should be aware of where it is.
 I will think about it and make a pro / con list in the morning.
@@ -17,6 +19,7 @@ public class MiniSoldiers {
     private int tileSize = 40;
     private int numTilesWidth = (int) gameWidth / tileSize;
     private int numTilesHeight = (int) gameHeight / tileSize;
+    private ArrayList<Unit> units = new ArrayList<>();
 
     public MiniSoldiers() {
         map = new Map(numTilesWidth, numTilesHeight, tileSize);
@@ -73,6 +76,10 @@ public class MiniSoldiers {
 
     public void spawnUnit(Unit unit, Location location) {
         map.getTile(location).addUnit(unit);
+        units.add(unit);
+    }
+    public ArrayList<Unit> getUnits() {
+        return units;
     }
     public Location getLocation(double x, double y) {
         int locX = (int) x / tileSize;

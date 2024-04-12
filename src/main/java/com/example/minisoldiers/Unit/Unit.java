@@ -14,5 +14,9 @@ public interface Unit {
     public void setHealth(int health);
     public int getAttackPower();
     public int getDefencePower();
+    public boolean hasMoved();
+    public boolean hasAttacked();
 
+    public void setHasMoved(boolean b);
+    public void setHasAttacked(boolean b);
 }
