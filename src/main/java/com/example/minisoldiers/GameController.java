@@ -45,7 +45,6 @@ public class GameController {
         double y = e.getY();
         Location clickLocation = game.getLocation(x, y);
         Tile selectedTile = map.getTile(clickLocation);
-        System.out.println(clickLocation);
         selectV2(selectedTile);
 
 
@@ -58,10 +57,11 @@ public class GameController {
         - highlight all tiles with hostile units
         - allow for an additional click that will attack chosen unit
      */
-    ArrayList<Tile> tileOptions = new ArrayList<>();
+    ArrayList<Tile> moveOptions = new ArrayList<>();
+    ArrayList<Tile> targetOptions = new ArrayList<>();
     public void displayMoves() {
         highlightPotentialMoves(selectedTile);
-        for (Tile tile: tileOptions) {
+        for (Tile tile: moveOptions) {
             tile.highlight(Color.GREENYELLOW);
         }
     }
@@ -71,32 +71,36 @@ public class GameController {
         selectedUnit.setHasMoved(true);
     }
     public void unHighlight() {
-        for (Tile t: tileOptions) {
+        for (Tile t: moveOptions) {
             t.unHighlight();
         }
-        tileOptions.clear();
+        for (Tile t: targetOptions) {
+            t.unHighlight();
+        }
+        targetOptions.clear();
+        moveOptions.clear();
     }
     public void displayTargets() {
         highlightPotentialTargets(selectedTile);
-        if (tileOptions.isEmpty()) {
-             selectedUnit = null;
+        if (targetOptions.isEmpty()) {
+//             selectedUnit = null;
         }
         else {
-            for (Tile t : tileOptions) {
+            for (Tile t : targetOptions) {
                 t.highlight(Color.RED);
             }
         }
     }
     public void commenceAttack() {
-        System.out.println("Attack");
         previouslySelectedTile.attack(selectedTile);
-        System.out.println(previouslySelectedTile.getUnit());
-        System.out.println(selectedTile.getUnit());
         selectedUnit.setHasAttacked(true);
-        if (selectedUnit.getHealth() < 0) {
+        selectedUnit.setHasMoved(true); // if an attack has taken place, then set the unit to have moved as well
+        //it may be that some units can attack and then move, but I think this should best be handled later on when
+        //that stage of the game is reached.
+        if (selectedUnit.getHealth() <= 0) {
             previouslySelectedTile.popUnit();
         }
-        if (selectedTile.getUnit().getHealth() < 0) {
+        if (selectedTile.getUnit().getHealth() <= 0) {
             selectedTile.popUnit();
         }
         selectedUnit = null;
@@ -113,18 +117,18 @@ public class GameController {
             if (!selectedUnit.hasMoved()) {
                 displayMoves();
             }
-            else if (!selectedUnit.hasAttacked()) {
+            if (!selectedUnit.hasAttacked()) {
                 displayTargets();
             }
         }
         //these else ifs make it so that you have to wait until the next turn to activate.
         else if (selectedUnit != null) {
-            if (!selectedUnit.hasMoved() && tileOptions.contains(selectedTile)) {
+            if (!selectedUnit.hasMoved() && moveOptions.contains(selectedTile)) {
                 doMovement();
                 unHighlight();
                 displayTargets();
             }
-            else if (!selectedUnit.hasAttacked() && tileOptions.contains(selectedTile)) {
+            else if (!selectedUnit.hasAttacked() && targetOptions.contains(selectedTile)) {
                 commenceAttack();
                 unHighlight();
             }
@@ -242,7 +246,7 @@ public class GameController {
         Unit unit = t.getUnit();
         int range = unit.getRange();
         getPotentialUnitAttacks(range, t);
-        for (Tile tile: tileOptions) {
+        for (Tile tile: targetOptions) {
             tile.highlight(Color.RED);
         }
     }
@@ -250,7 +254,7 @@ public class GameController {
     public void getPotentialUnitAttacks(int range, Tile t) {
         if (t.containsUnit()) {
             if (t.getUnit().getFaction() != selectedUnit.getFaction()) {
-                tileOptions.add(t);
+                targetOptions.add(t);
             }
         }
         Tile above = map.getTile(t.getAbove());
@@ -278,13 +282,13 @@ public class GameController {
         getPotentialUnitMovesV2(moves, t);
 
         //highlight all potential moves
-        for (Tile tile: tileOptions) {
+        for (Tile tile: moveOptions) {
             tile.highlight(Color.GREENYELLOW);
         }
     }
     public void getPotentialUnitMovesV2(int moves, Tile t) {
         if (!t.containsUnit()) {
-            tileOptions.add(t);
+            moveOptions.add(t);
         }
         Tile above = map.getTile(t.getAbove());
         Tile below = map.getTile(t.getBelow());
@@ -313,11 +317,11 @@ public class GameController {
         if there is a hostile enemy, the algorithm does not function correctly
          */
         int original_moves = moves;
-        tileOptions.add(t);
+        moveOptions.add(t);
         //go up until out of moves
         Tile above = map.getTile(t.getAbove());
         while (moves >= above.getTerrain().getMovementCost() && (above.getUnit() == null || above.getUnit().getFaction() == selectedUnit.getFaction())) {
-            tileOptions.add(above);
+            moveOptions.add(above);
             moves -= above.getTerrain().getMovementCost();
             above = map.getTile(above.getAbove());
         }
@@ -325,7 +329,7 @@ public class GameController {
         moves = original_moves;
         Tile below = map.getTile(t.getBelow());
         while (moves >= below.getTerrain().getMovementCost() && (below.getUnit() == null || below.getUnit().getFaction() == selectedUnit.getFaction())) {
-            tileOptions.add(below);
+            moveOptions.add(below);
             moves -= below.getTerrain().getMovementCost();
             below = map.getTile(below.getBelow());
         }

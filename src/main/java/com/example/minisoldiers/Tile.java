@@ -17,6 +17,7 @@ public class Tile extends Parent {
     private Shape s;
     private boolean selected = false;
     private boolean highlighted = false;
+    private HealthBar healthBar;
     public Tile(Terrain terrain, Location location, int tileSize) {
         this.terrain = terrain;
         this.location = location;
@@ -70,6 +71,10 @@ public class Tile extends Parent {
         this.selected = s;
     }
 
+    public int getTileSize() {
+        return tileSize;
+    }
+
     public Terrain getTerrain() {
         return terrain;
     }
@@ -84,10 +89,11 @@ public class Tile extends Parent {
     }
     public Unit popUnit() {
         getChildren().remove(s);
-
+        getChildren().remove(healthBar);
         //this sets unit to null while still returning unit
         Unit u = unit;
         unit = null;
+        healthBar = null;
         return u;
     }
 
@@ -106,6 +112,13 @@ public class Tile extends Parent {
         //adjust health statistics accordingly
         unit.setHealth(unit.getHealth() - defensePower);
         opponent.setHealth(opponent.getHealth() - attackPower);
+
+        //update health bars
+        healthBar.update();
+        tile.getHealthBar().update();
+    }
+    public HealthBar getHealthBar() {
+        return healthBar;
     }
     public void addUnit(Unit unit) {
         if (!containsUnit())  {
@@ -114,6 +127,8 @@ public class Tile extends Parent {
             s.setFill(unit.getFaction().getColor());
             getChildren().add(s);
             this.unit = unit;
+            healthBar = new HealthBar(this);
+            getChildren().add(healthBar);
         }
     }
     //get the tiles around this. This may be better suited for the map rather than for tile...

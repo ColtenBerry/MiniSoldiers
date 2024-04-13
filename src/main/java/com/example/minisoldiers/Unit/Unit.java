@@ -16,7 +16,6 @@ public interface Unit {
     public int getDefencePower();
     public boolean hasMoved();
     public boolean hasAttacked();
-
     public void setHasMoved(boolean b);
     public void setHasAttacked(boolean b);
 }
